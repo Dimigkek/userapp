@@ -1,8 +1,12 @@
 package com.example.userapp.service.impl;
 
+import com.example.userapp.dto.UserResponse;
+import com.example.userapp.dto.mapper.UserMapper;
 import com.example.userapp.entity.User;
 import com.example.userapp.repository.UserRepository;
 import com.example.userapp.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,5 +44,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserResponse> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(UserMapper::toResponse);
     }
 }

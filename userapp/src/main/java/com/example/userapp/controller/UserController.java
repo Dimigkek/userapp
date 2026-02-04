@@ -7,14 +7,15 @@ import com.example.userapp.entity.User;
 import com.example.userapp.exception.ResourceNotFoundException;
 import com.example.userapp.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin("*")
 public class UserController {
 
     private final UserService userService;
@@ -22,7 +23,6 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
@@ -36,15 +36,11 @@ public class UserController {
         );
     }
 
-
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserResponse> users = userService.findAll()
-                .stream()
-                .map(UserMapper::toResponse)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(users);
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
+            @PageableDefault(page = 0, size = 5) Pageable pageable
+    ) {
+        return ResponseEntity.ok(userService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
@@ -56,7 +52,6 @@ public class UserController {
                 UserMapper.toResponse(user)
         );
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
