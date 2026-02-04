@@ -4,6 +4,7 @@ import com.example.userapp.dto.UserCreateRequest;
 import com.example.userapp.dto.UserResponse;
 import com.example.userapp.dto.mapper.UserMapper;
 import com.example.userapp.entity.User;
+import com.example.userapp.exception.ResourceNotFoundException;
 import com.example.userapp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    // ================= CREATE =================
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
@@ -36,7 +36,6 @@ public class UserController {
         );
     }
 
-    // ================= READ =================
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -51,14 +50,13 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         User user = userService.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return ResponseEntity.ok(
                 UserMapper.toResponse(user)
         );
     }
 
-    // ================= DELETE =================
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
