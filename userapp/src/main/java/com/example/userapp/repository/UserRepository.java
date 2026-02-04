@@ -2,6 +2,26 @@ package com.example.userapp.repository;
 
 import com.example.userapp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Query("""
+        select distinct u
+        from User u
+        left join fetch u.addresses
+    """)
+    List<User> findAllWithAddresses();
+
+    @Query("""
+        select u
+        from User u
+        left join fetch u.addresses
+        where u.id = :id
+    """)
+    Optional<User> findByIdWithAddresses(@Param("id") Long id);
 }

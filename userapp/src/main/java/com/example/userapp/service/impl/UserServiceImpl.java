@@ -4,6 +4,7 @@ import com.example.userapp.entity.User;
 import com.example.userapp.repository.UserRepository;
 import com.example.userapp.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,21 +19,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> findAll() {
-        return userRepository.findAll();
+        return userRepository.findAllWithAddresses();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+        return userRepository.findByIdWithAddresses(id);
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
