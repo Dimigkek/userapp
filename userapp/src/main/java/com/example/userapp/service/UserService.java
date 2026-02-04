@@ -1,5 +1,6 @@
 package com.example.userapp.service;
 
+import com.example.userapp.dto.UserCreateRequest;
 import com.example.userapp.dto.UserResponse;
 import com.example.userapp.entity.User;
 import org.springframework.data.domain.Page;
@@ -19,5 +20,7 @@ public interface UserService {
     void deleteById(Long id);
 
     Page<UserResponse> findAll(Pageable pageable);
+
+    UserResponse update(Long id, UserCreateRequest request);
 
 }
