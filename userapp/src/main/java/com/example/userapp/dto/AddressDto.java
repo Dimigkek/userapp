@@ -1,8 +1,13 @@
 package com.example.userapp.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class AddressDto {
 
+    @NotBlank
     private String type;
+
+    @NotBlank
     private String addressText;
 
     public String getType() {

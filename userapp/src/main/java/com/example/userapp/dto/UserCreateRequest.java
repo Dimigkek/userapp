@@ -1,14 +1,27 @@
 package com.example.userapp.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 import java.util.List;
 
 public class UserCreateRequest {
 
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String surname;
+
+    @NotBlank
     private String gender;
+
+    @NotNull
     private LocalDate birthdate;
+
+    @NotEmpty
     private List<AddressDto> addresses;
 
     public String getName() {
