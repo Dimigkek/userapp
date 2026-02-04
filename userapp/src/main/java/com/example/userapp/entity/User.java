@@ -1,10 +1,7 @@
 package com.example.userapp.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -26,15 +23,15 @@ public class User {
     @Column(nullable = false)
     private LocalDate birthdate;
 
-    @OneToMany(
+    @OneToOne(
             mappedBy = "user",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
-    private List<Address> addresses = new ArrayList<>();
+    private Address address;
 
-    public User() {
-    }
+    public User() {}
 
     public Long getId() {
         return id;
@@ -72,7 +69,14 @@ public class User {
         this.birthdate = birthdate;
     }
 
-    public List<Address> getAddresses() {
-        return addresses;
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+        if (address != null) {
+            address.setUser(this);
+        }
     }
 }

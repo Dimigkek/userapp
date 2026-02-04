@@ -1,11 +1,9 @@
 package com.example.userapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class UserCreateRequest {
 
@@ -21,8 +19,8 @@ public class UserCreateRequest {
     @NotNull
     private LocalDate birthdate;
 
-    @NotEmpty
-    private List<AddressDto> addresses;
+    private String homeAddress;
+    private String workAddress;
 
     public String getName() {
         return name;
@@ -56,11 +54,19 @@ public class UserCreateRequest {
         this.birthdate = birthdate;
     }
 
-    public List<AddressDto> getAddresses() {
-        return addresses;
+    public String getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setAddresses(List<AddressDto> addresses) {
-        this.addresses = addresses;
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public String getWorkAddress() {
+        return workAddress;
+    }
+
+    public void setWorkAddress(String workAddress) {
+        this.workAddress = workAddress;
     }
 }

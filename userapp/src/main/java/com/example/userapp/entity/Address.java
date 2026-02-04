@@ -3,44 +3,43 @@ package com.example.userapp.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "user_addresses")
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 10)
-    private String type; // HOME or WORK
+    @Column(columnDefinition = "TEXT")
+    private String homeAddress;
 
     @Column(columnDefinition = "TEXT")
-    private String addressText;
+    private String workAddress;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    public Address() {
-    }
+    public Address() {}
 
     public Long getId() {
         return id;
     }
 
-    public String getType() {
-        return type;
+    public String getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
     }
 
-    public String getAddressText() {
-        return addressText;
+    public String getWorkAddress() {
+        return workAddress;
     }
 
-    public void setAddressText(String addressText) {
-        this.addressText = addressText;
+    public void setWorkAddress(String workAddress) {
+        this.workAddress = workAddress;
     }
 
     public User getUser() {

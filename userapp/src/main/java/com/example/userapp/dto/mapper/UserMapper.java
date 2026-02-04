@@ -1,13 +1,9 @@
 package com.example.userapp.dto.mapper;
 
-import com.example.userapp.dto.AddressDto;
 import com.example.userapp.dto.UserCreateRequest;
 import com.example.userapp.dto.UserResponse;
 import com.example.userapp.entity.Address;
 import com.example.userapp.entity.User;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserMapper {
 
@@ -21,13 +17,12 @@ public class UserMapper {
         user.setGender(request.getGender());
         user.setBirthdate(request.getBirthdate());
 
-        if (request.getAddresses() != null) {
-            List<Address> addresses = request.getAddresses()
-                    .stream()
-                    .map(dto -> toAddressEntity(dto, user))
-                    .collect(Collectors.toList());
-
-            user.getAddresses().addAll(addresses);
+        if (request.getHomeAddress() != null || request.getWorkAddress() != null) {
+            Address address = new Address();
+            address.setHomeAddress(request.getHomeAddress());
+            address.setWorkAddress(request.getWorkAddress());
+            address.setUser(user);
+            user.setAddress(address);
         }
 
         return user;
@@ -41,30 +36,11 @@ public class UserMapper {
         response.setGender(user.getGender());
         response.setBirthdate(user.getBirthdate());
 
-        if (user.getAddresses() != null) {
-            List<AddressDto> addresses = user.getAddresses()
-                    .stream()
-                    .map(UserMapper::toAddressDto)
-                    .collect(Collectors.toList());
-
-            response.setAddresses(addresses);
+        if (user.getAddress() != null) {
+            response.setHomeAddress(user.getAddress().getHomeAddress());
+            response.setWorkAddress(user.getAddress().getWorkAddress());
         }
 
         return response;
-    }
-
-    private static Address toAddressEntity(AddressDto dto, User user) {
-        Address address = new Address();
-        address.setType(dto.getType());
-        address.setAddressText(dto.getAddressText());
-        address.setUser(user);
-        return address;
-    }
-
-    private static AddressDto toAddressDto(Address address) {
-        AddressDto dto = new AddressDto();
-        dto.setType(address.getType());
-        dto.setAddressText(address.getAddressText());
-        return dto;
     }
 }

@@ -27,13 +27,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<User> findAll() {
-        return userRepository.findAllWithAddresses();
+        return userRepository.findAllWithAddress();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<User> findById(Long id) {
-        return userRepository.findByIdWithAddresses(id);
+        return userRepository.findByIdWithAddress(id);
     }
 
     @Override

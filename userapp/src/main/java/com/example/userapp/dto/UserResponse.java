@@ -1,7 +1,6 @@
 package com.example.userapp.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class UserResponse {
 
@@ -10,7 +9,9 @@ public class UserResponse {
     private String surname;
     private String gender;
     private LocalDate birthdate;
-    private List<AddressDto> addresses;
+
+    private String homeAddress;
+    private String workAddress;
 
     public Long getId() {
         return id;
@@ -52,11 +53,19 @@ public class UserResponse {
         this.birthdate = birthdate;
     }
 
-    public List<AddressDto> getAddresses() {
-        return addresses;
+    public String getHomeAddress() {
+        return homeAddress;
     }
 
-    public void setAddresses(List<AddressDto> addresses) {
-        this.addresses = addresses;
+    public void setHomeAddress(String homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public String getWorkAddress() {
+        return workAddress;
+    }
+
+    public void setWorkAddress(String workAddress) {
+        this.workAddress = workAddress;
     }
 }

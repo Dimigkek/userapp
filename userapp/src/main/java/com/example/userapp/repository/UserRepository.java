@@ -10,18 +10,11 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("""
-        select distinct u
-        from User u
-        left join fetch u.addresses
-    """)
-    List<User> findAllWithAddresses();
+    @Query("select u from User u left join fetch u.address")
+    List<User> findAllWithAddress();
 
-    @Query("""
-        select u
-        from User u
-        left join fetch u.addresses
-        where u.id = :id
-    """)
-    Optional<User> findByIdWithAddresses(@Param("id") Long id);
+
+    @Query("select u from User u left join fetch u.address where u.id = :id")
+    Optional<User> findByIdWithAddress(Long id);
+
 }
