@@ -36,3 +36,5 @@ The database is designed with **Normalization** in mind:
 2. **Configuration:** Update `src/main/resources/application.yml` with your local database credentials.
 3. **Build:** ```bash
    mvn clean install
+4. **Run** ```bash
+   mvn spring-boot:run
