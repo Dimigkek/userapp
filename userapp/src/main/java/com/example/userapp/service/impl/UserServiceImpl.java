@@ -78,4 +78,28 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(user);
         return UserMapper.toResponse(updatedUser);
     }
+
+    @Override
+    @Transactional
+    public UserResponse save(UserCreateRequest request) {
+        // DTO -> Entity (χρησιμοποιείς ήδη τον mapper σου)
+        User user = UserMapper.toEntity(request);
+
+        // αν χρειάζεται να δημιουργήσεις Address μέσω addressService:
+        if (user.getAddress() != null) {
+            Address savedAddress = addressService.save(user.getAddress());
+            user.setAddress(savedAddress);
+        }
+
+        User saved = userRepository.save(user);
+
+        // Entity -> DTO
+        return UserMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countUsers() {
+        return userRepository.count();
+    }
 }
