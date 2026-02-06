@@ -17,6 +17,20 @@ The project follows a **Layered Architecture** to ensure a clean separation of c
 3. **Repository Layer:** Interfaces with the MySQL database using Spring Data JPA.
 4. **DTO Pattern:** Uses `UserCreateRequest` and `UserResponse` to decouple the API from the Database Schema.
 
+## Advanced Pagination & Sorting
+Server-side Efficiency: The API utilizes org.springframework.data.domain.Pageable to perform pagination at the database level, ensuring the server doesn't load unnecessary records into memory.
+
+Metadata-Rich Responses: Returns a Page object containing critical metadata for the Frontend (totalElements, totalPages, isFirst, isLast).
+
+Dynamic Sorting: Supports dynamic sorting via URL parameters (e.g., ?sort=name,desc).
+
+## Data Transfer Objects (DTO) & Mapping
+Request/Response Segregation: Specialized DTOs for creation and retrieval ensure that internal database fields are never exposed.
+
+Circular Reference Prevention: The UserResponse DTO "flattens" the Address entity, preventing infinite recursion loops during JSON serialization.
+
+Manual Mapping Logic: Implemented a dedicated UserMapper utility class for full control over data transformation and performance optimization.
+
 
 
 ##  Database Schema & Normalization
