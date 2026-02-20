@@ -23,6 +23,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     Page<Task> findByOwnerId(Long ownerId, Pageable pageable);
 
-    // 3. Για τα tasks που του έχουν ανατεθεί
     Page<Task> findByAssigneesId(Long userId, Pageable pageable);
 }

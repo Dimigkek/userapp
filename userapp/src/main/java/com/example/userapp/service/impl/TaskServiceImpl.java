@@ -47,7 +47,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TaskResponse createTask(TaskRequest request) {
-        // 1. Βρες τον owner
         User owner = userRepository.findById(request.ownerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
