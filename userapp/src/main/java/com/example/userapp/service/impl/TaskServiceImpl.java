@@ -29,6 +29,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
+    public void deleteTask(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        task.getAssignees().clear();
+
+        taskRepository.delete(task);
+    }
+
+    @Override
+    @Transactional
     public TaskResponse createTask(TaskRequest request) {
         User owner = userRepository.findById(request.ownerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found"));

@@ -32,4 +32,10 @@ public class TaskController {
     public ResponseEntity<List<TaskResponse>> getTasksByOwner(@PathVariable Long ownerId) {
         return ResponseEntity.ok(taskService.getTasksByOwner(ownerId));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
 }
