@@ -119,7 +119,16 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
 
-        return taskMapper.toResponse(task);
+        return new TaskResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription() != null ? task.getDescription() : "No description provided.",
+                task.getOwner().getName() + " " + task.getOwner().getSurname(),
+                task.getAssignees().stream()
+                        .map(u -> u.getName() + " " + u.getSurname())
+                        .collect(Collectors.toSet()),
+                task.getStatus() != null ? task.getStatus().name() : "OPEN"
+        );
     }
 
 
