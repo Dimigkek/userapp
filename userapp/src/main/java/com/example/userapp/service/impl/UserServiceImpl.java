@@ -4,15 +4,20 @@ import com.example.userapp.dto.UserCreateRequest;
 import com.example.userapp.dto.UserResponse;
 import com.example.userapp.dto.mapper.UserMapper;
 import com.example.userapp.entity.Address;
+import com.example.userapp.entity.Task;
 import com.example.userapp.entity.User;
 import com.example.userapp.exception.ResourceNotFoundException;
+import com.example.userapp.repository.TaskRepository;
 import com.example.userapp.repository.UserRepository;
 import com.example.userapp.service.AddressService;
 import com.example.userapp.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.example.userapp.repository.TaskRepository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +26,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AddressService addressService;
+    private  TaskRepository taskRepository;
 
-    public UserServiceImpl(UserRepository userRepository, AddressService addressService) {
+    public UserServiceImpl(UserRepository userRepository, AddressService addressService, TaskRepository taskRepository) {
         this.userRepository = userRepository;
         this.addressService = addressService;
+        this.taskRepository = taskRepository;
     }
 
     @Override
@@ -48,7 +55,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        for (Task task : new ArrayList<>(user.getAssignedTasks())) {
+            task.getAssignees().remove(user);
+        }
+
+        List<Task> ownedTasks = taskRepository.findByOwnerId(id);
+        if (!ownedTasks.isEmpty()) {
+            taskRepository.deleteAll(ownedTasks);
+        }
+
+        userRepository.delete(user);
     }
 
     @Override

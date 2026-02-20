@@ -41,6 +41,13 @@ public class User {
     @ManyToMany(mappedBy = "assignees")
     private Set<Task> assignedTasks = new HashSet<>();
 
+    @PreRemove
+    private void removeUserFromTasks() {
+        for (Task task : assignedTasks) {
+            task.getAssignees().remove(this);
+        }
+    }
+
     public User() {}
 
     public Long getId() {
