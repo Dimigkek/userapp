@@ -38,4 +38,9 @@ public class TaskController {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/assignee/{userId}")
+    public ResponseEntity<List<TaskResponse>> getTasksByAssignee(@PathVariable Long userId) {
+        return ResponseEntity.ok(taskService.getTasksByAssignee(userId));
+    }
 }

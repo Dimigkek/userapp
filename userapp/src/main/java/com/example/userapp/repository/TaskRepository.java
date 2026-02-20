@@ -15,5 +15,14 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t LEFT JOIN FETCH t.assignees WHERE t.id = :id")
     Optional<Task> findByIdWithAssignees(@Param("id") Long id);
 
-    List<Task> findByOwnerId(Long ownerId);
+    @Query("SELECT DISTINCT t FROM Task t " +
+            "LEFT JOIN FETCH t.owner " +
+            "LEFT JOIN FETCH t.assignees " +
+            "WHERE t.owner.id = :ownerId")
+    List<Task> findByOwnerId(@Param("ownerId") Long ownerId);
+
+    @Query("SELECT t FROM Task t JOIN t.assignees a WHERE a.id = :userId")
+    List<Task> findByAssigneeId(@Param("userId") Long userId);
+
+
 }

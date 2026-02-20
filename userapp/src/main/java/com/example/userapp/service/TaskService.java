@@ -9,4 +9,5 @@ public interface TaskService {
     TaskResponse createTask(TaskRequest request);
     TaskResponse assignUserToTask(Long taskId, Long userId);
     List<TaskResponse> getTasksByOwner(Long ownerId);
+    List<TaskResponse> getTasksByAssignee(Long userId);
 }

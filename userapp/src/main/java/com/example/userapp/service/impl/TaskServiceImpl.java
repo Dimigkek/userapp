@@ -52,6 +52,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<TaskResponse> getTasksByAssignee(Long userId) {
+        return taskRepository.findByAssigneeId(userId).stream()
+                .map(taskMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public TaskResponse assignUserToTask(Long taskId, Long userId) {
         Task task = taskRepository.findByIdWithAssignees(taskId)
