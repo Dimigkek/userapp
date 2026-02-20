@@ -11,4 +11,5 @@ public interface TaskService {
 
     Page<TaskResponse> getTasksByOwner(Long ownerId, int page);
     Page<TaskResponse> getTasksByAssignee(Long userId, int page);
+    Page<TaskResponse> getAllTasks(int page, int size);
 }

@@ -36,6 +36,13 @@ public class TaskController {
         return ResponseEntity.ok(taskService.createTask(request));
     }
 
+    @GetMapping
+    public ResponseEntity<Page<TaskResponse>> getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(taskService.getAllTasks(page, size));
+    }
+
     @PostMapping("/{taskId}/assign/{userId}")
     public ResponseEntity<TaskResponse> assignUser(@PathVariable Long taskId, @PathVariable Long userId) {
         return ResponseEntity.ok(taskService.assignUserToTask(taskId, userId));

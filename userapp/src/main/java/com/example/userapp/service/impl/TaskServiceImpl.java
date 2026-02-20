@@ -72,6 +72,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<TaskResponse> getAllTasks(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+
+        return taskRepository.findAll(pageable)
+                .map(taskMapper::toResponse);
+    }
+
+    @Override
     @Transactional
     public void deleteTask(Long id) {
         Task task = taskRepository.findById(id)
