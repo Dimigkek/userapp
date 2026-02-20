@@ -2,6 +2,10 @@ package com.example.userapp.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -30,6 +34,12 @@ public class User {
             fetch = FetchType.LAZY
     )
     private Address address;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> ownedTasks = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "assignees")
+    private Set<Task> assignedTasks = new HashSet<>();
 
     public User() {}
 
@@ -78,5 +88,21 @@ public class User {
         if (address != null) {
             address.setUser(this);
         }
+    }
+
+    public List<Task> getOwnedTasks() {
+        return ownedTasks;
+    }
+
+    public void setOwnedTasks(List<Task> ownedTasks) {
+        this.ownedTasks = ownedTasks;
+    }
+
+    public Set<Task> getAssignedTasks() {
+        return assignedTasks;
+    }
+
+    public void setAssignedTasks(Set<Task> assignedTasks) {
+        this.assignedTasks = assignedTasks;
     }
 }
