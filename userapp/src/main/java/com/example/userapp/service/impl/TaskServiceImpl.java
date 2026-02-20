@@ -140,5 +140,17 @@ public class TaskServiceImpl implements TaskService {
         );
     }
 
+    @Override
+    @Transactional
+    public TaskResponse updateTask(Long id, TaskRequest request) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+
+        return taskMapper.toResponse(taskRepository.save(task));
+    }
+
 
 }

@@ -15,4 +15,5 @@ public interface TaskService {
     Page<TaskResponse> getAllTasks(int page, int size);
     TaskResponse getTaskById(Long id);
     TaskResponse updateTaskStatus(Long taskId, TaskStatus status);
+    TaskResponse updateTask(Long id, TaskRequest request);
 }

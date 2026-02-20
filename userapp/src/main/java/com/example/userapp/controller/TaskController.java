@@ -64,4 +64,9 @@ public class TaskController {
     public ResponseEntity<TaskResponse> updateStatus(@PathVariable Long id, @RequestParam TaskStatus status) {
         return ResponseEntity.ok(taskService.updateTaskStatus(id, status));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
+        return ResponseEntity.ok(taskService.updateTask(id, request));
+    }
 }
