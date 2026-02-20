@@ -44,7 +44,16 @@ public class TaskServiceImpl implements TaskService {
     public Page<TaskResponse> getTasksByAssignee(Long userId, int page) {
         Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
         return taskRepository.findByAssigneesId(userId, pageable)
-                .map(taskMapper::toResponse);
+                .map(task -> new TaskResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription() != null ? task.getDescription() : "No description provided.",
+                        task.getOwner().getName() + " " + task.getOwner().getSurname(),
+                        task.getAssignees().stream()
+                                .map(u -> u.getName() + " " + u.getSurname())
+                                .collect(Collectors.toSet()),
+                        task.getStatus() != null ? task.getStatus().name() : "OPEN"
+                ));
     }
 
     @Override
