@@ -8,11 +8,12 @@ import com.example.userapp.entity.User;
 import com.example.userapp.repository.TaskRepository;
 import com.example.userapp.repository.UserRepository;
 import com.example.userapp.service.TaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -28,35 +29,36 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Transactional
-    public void deleteTask(Long id) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+    @Transactional(readOnly = true)
+    public Page<TaskResponse> getTasksByOwner(Long ownerId, int page) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+        return taskRepository.findByOwnerId(ownerId, pageable)
+                .map(taskMapper::toResponse);
+    }
 
-        task.getAssignees().clear();
-
-        taskRepository.delete(task);
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TaskResponse> getTasksByAssignee(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+        return taskRepository.findByAssigneesId(userId, pageable)
+                .map(taskMapper::toResponse);
     }
 
     @Override
     @Transactional
     public TaskResponse createTask(TaskRequest request) {
+        // 1. Βρες τον owner
         User owner = userRepository.findById(request.ownerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
 
-        Task task = new Task(request.title(), request.description(), owner);
+        Task task = new Task();
+        task.setTitle(request.title());
+        task.setOwner(owner);
+
+        task.setDescription(request.description() != null ? request.description() : "");
 
         Task savedTask = taskRepository.save(task);
-
         return taskMapper.toResponse(savedTask);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<TaskResponse> getTasksByAssignee(Long userId) {
-        return taskRepository.findByAssigneeId(userId).stream()
-                .map(taskMapper::toResponse)
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -64,20 +66,18 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponse assignUserToTask(Long taskId, Long userId) {
         Task task = taskRepository.findByIdWithAssignees(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         task.addAssignee(user);
-
         return taskMapper.toResponse(task);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<TaskResponse> getTasksByOwner(Long ownerId) {
-        return taskRepository.findByOwnerId(ownerId).stream()
-                .map(taskMapper::toResponse)
-                .collect(Collectors.toList());
+    @Transactional
+    public void deleteTask(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        task.getAssignees().clear();
+        taskRepository.delete(task);
     }
 }

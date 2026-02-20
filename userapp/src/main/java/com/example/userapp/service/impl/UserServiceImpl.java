@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
             task.getAssignees().remove(user);
         }
 
-        List<Task> ownedTasks = taskRepository.findByOwnerId(id);
+        List<Task> ownedTasks = taskRepository.findAllByOwnerId(id);
         if (!ownedTasks.isEmpty()) {
             taskRepository.deleteAll(ownedTasks);
         }
