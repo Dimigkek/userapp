@@ -32,6 +32,10 @@ public class Task {
     private Set<User> assignees = new HashSet<>();
 
 
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status = TaskStatus.OPEN;
+
+
     public Task() {}
 
 
@@ -66,6 +70,14 @@ public class Task {
 
     public Set<User> getAssignees() { return assignees; }
     public void setAssignees(Set<User> assignees) { this.assignees = assignees; }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
 
     @Override
     public boolean equals(Object o) {

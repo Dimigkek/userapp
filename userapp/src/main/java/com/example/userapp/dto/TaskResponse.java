@@ -7,5 +7,6 @@ public record TaskResponse(
         String title,
         String description,
         String ownerName,
-        Set<String> assigneeNames
+        Set<String> assigneeNames,
+        String status
 ) {}

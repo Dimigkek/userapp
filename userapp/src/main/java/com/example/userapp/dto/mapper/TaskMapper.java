@@ -20,7 +20,8 @@ public class TaskMapper {
                 task.getTitle(),
                 task.getDescription(),
                 task.getOwner().getName() + " " + task.getOwner().getSurname(),
-                assigneeNames
+                assigneeNames,
+                task.getStatus().name()
         );
     }
 }

@@ -2,6 +2,7 @@ package com.example.userapp.controller;
 
 import com.example.userapp.dto.TaskRequest;
 import com.example.userapp.dto.TaskResponse;
+import com.example.userapp.entity.TaskStatus;
 import com.example.userapp.service.TaskService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.createTask(request));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.getTaskById(id));
+    }
+
     @GetMapping
     public ResponseEntity<Page<TaskResponse>> getAllTasks(
             @RequestParam(defaultValue = "0") int page,
@@ -52,5 +58,10 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskResponse> updateStatus(@PathVariable Long id, @RequestParam TaskStatus status) {
+        return ResponseEntity.ok(taskService.updateTaskStatus(id, status));
     }
 }

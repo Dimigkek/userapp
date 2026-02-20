@@ -4,6 +4,7 @@ import com.example.userapp.dto.TaskRequest;
 import com.example.userapp.dto.TaskResponse;
 import com.example.userapp.dto.mapper.TaskMapper;
 import com.example.userapp.entity.Task;
+import com.example.userapp.entity.TaskStatus;
 import com.example.userapp.entity.User;
 import com.example.userapp.repository.TaskRepository;
 import com.example.userapp.repository.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -55,6 +58,7 @@ public class TaskServiceImpl implements TaskService {
         task.setOwner(owner);
 
         task.setDescription(request.description() != null ? request.description() : "");
+        task.setStatus(TaskStatus.OPEN);
 
         Task savedTask = taskRepository.save(task);
         return taskMapper.toResponse(savedTask);
@@ -72,16 +76,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<TaskResponse> getAllTasks(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-
-
-        return taskRepository.findAll(pageable)
-                .map(taskMapper::toResponse);
-    }
-
-    @Override
     @Transactional
     public void deleteTask(Long id) {
         Task task = taskRepository.findById(id)
@@ -89,4 +83,44 @@ public class TaskServiceImpl implements TaskService {
         task.getAssignees().clear();
         taskRepository.delete(task);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TaskResponse> getAllTasks(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return taskRepository.findAll(pageable)
+                .map(task -> new TaskResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getOwner().getName() + " " + task.getOwner().getSurname(),
+                        task.getAssignees().stream()
+                                .map(u -> u.getName() + " " + u.getSurname())
+                                .collect(Collectors.toSet()),
+                        task.getStatus() != null ? task.getStatus().name() : "OPEN"
+                ));
+    }
+
+    @Override
+    @Transactional
+    public TaskResponse updateTaskStatus(Long taskId, TaskStatus status) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        task.setStatus(status);
+        Task updatedTask = taskRepository.save(task);
+
+        return taskMapper.toResponse(updatedTask);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TaskResponse getTaskById(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+
+        return taskMapper.toResponse(task);
+    }
+
+
 }
