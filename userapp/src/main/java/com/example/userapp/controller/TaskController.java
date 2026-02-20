@@ -21,15 +21,17 @@ public class TaskController {
     @GetMapping("/owner/{ownerId}")
     public ResponseEntity<Page<TaskResponse>> getByOwner(
             @PathVariable Long ownerId,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(taskService.getTasksByOwner(ownerId, page));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(taskService.getTasksByOwner(ownerId, page, size));
     }
 
     @GetMapping("/assignee/{userId}")
     public ResponseEntity<Page<TaskResponse>> getByAssignee(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(taskService.getTasksByAssignee(userId, page));
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(taskService.getTasksByAssignee(userId, page, size));
     }
 
     @PostMapping

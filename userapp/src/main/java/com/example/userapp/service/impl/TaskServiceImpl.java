@@ -16,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,16 +35,16 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TaskResponse> getTasksByOwner(Long ownerId, int page) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+    public Page<TaskResponse> getTasksByOwner(Long ownerId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return taskRepository.findByOwnerId(ownerId, pageable)
                 .map(taskMapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TaskResponse> getTasksByAssignee(Long userId, int page) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("id").descending());
+    public Page<TaskResponse> getTasksByAssignee(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return taskRepository.findByAssigneesId(userId, pageable)
                 .map(task -> new TaskResponse(
                         task.getId(),
@@ -140,17 +142,20 @@ public class TaskServiceImpl implements TaskService {
         );
     }
 
-    @Override
     @Transactional
     public TaskResponse updateTask(Long id, TaskRequest request) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-
+        Task task = taskRepository.findById(id).orElseThrow();
         task.setTitle(request.title());
         task.setDescription(request.description());
 
+        if (request.assigneeIds() != null) {
+            List<User> newAssignees = userRepository.findAllById(request.assigneeIds());
+            task.setAssignees(new HashSet<>(newAssignees));
+        }
+
         return taskMapper.toResponse(taskRepository.save(task));
     }
+
 
 
 }
