@@ -88,13 +88,23 @@ public class UserServiceImpl implements UserService {
         user.setGender(request.getGender());
         user.setBirthdate(request.getBirthdate());
 
-        if (user.getAddress() != null) {
-            Address addr = user.getAddress();
+        Address addr = user.getAddress();
+
+        if (addr == null) {
+            if (request.getHomeAddress() != null || request.getWorkAddress() != null) {
+                addr = new Address();
+                addr.setUser(user);
+                user.setAddress(addr);
+            }
+        }
+
+        if (addr != null) {
             addr.setHomeAddress(request.getHomeAddress());
             addr.setWorkAddress(request.getWorkAddress());
         }
 
         User updatedUser = userRepository.save(user);
+
         return UserMapper.toResponse(updatedUser);
     }
 }
