@@ -27,12 +27,7 @@ public class UserController {
     public ResponseEntity<UserResponse> createUser(
             @Valid @RequestBody UserCreateRequest request
     ) {
-        User user = UserMapper.toEntity(request);
-        User savedUser = userService.save(user);
-
-        return ResponseEntity.ok(
-                UserMapper.toResponse(savedUser)
-        );
+        return ResponseEntity.ok(userService.create(request));
     }
 
     @GetMapping

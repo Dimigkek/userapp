@@ -23,4 +23,5 @@ public interface UserService {
 
     UserResponse update(Long id, UserCreateRequest request);
 
+    UserResponse create(UserCreateRequest request);
 }

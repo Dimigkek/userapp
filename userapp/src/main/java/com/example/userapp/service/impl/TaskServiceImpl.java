@@ -142,6 +142,7 @@ public class TaskServiceImpl implements TaskService {
         );
     }
 
+    @Override
     @Transactional
     public TaskResponse updateTask(Long id, TaskRequest request) {
         Task task = taskRepository.findById(id).orElseThrow();

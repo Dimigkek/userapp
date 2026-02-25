@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final AddressService addressService;
-    private  TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
     public UserServiceImpl(UserRepository userRepository, AddressService addressService, TaskRepository taskRepository) {
         this.userRepository = userRepository;
@@ -75,6 +75,14 @@ public class UserServiceImpl implements UserService {
     public Page<UserResponse> findAll(Pageable pageable) {
         return userRepository.findAll(pageable)
                 .map(UserMapper::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse create(UserCreateRequest request) {
+        User user = UserMapper.toEntity(request);
+        User savedUser = userRepository.save(user);
+        return UserMapper.toResponse(savedUser);
     }
 
     @Override
