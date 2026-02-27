@@ -62,8 +62,14 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        User user = userService.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
         userService.deleteById(id);
-        loggingService.logActivity("USER_DELETE", "Deleted user with ID: " + id);
+
+        String fullName = user.getName() + " " + user.getSurname();
+        loggingService.logActivity("USER_DELETE", "Deleted user: " + fullName + " (ID: " + id + ")");
+
         return ResponseEntity.noContent().build();
     }
 }

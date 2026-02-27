@@ -60,14 +60,14 @@ public class TaskController {
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
         TaskResponse response = taskService.updateTask(id, request);
-        loggingService.logActivity("TASK_UPDATE", "Updated task ID: " + id + " with title: " + request.title());
+        loggingService.logActivity("TASK_UPDATE", "Updated task : " + request.title());
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<TaskResponse> updateStatus(@PathVariable Long id, @RequestParam TaskStatus status) {
         TaskResponse response = taskService.updateTaskStatus(id, status);
-        loggingService.logActivity("TASK_STATUS_UPDATE", "Task Title: " + response.title() + " status to: " + status);
+        loggingService.logActivity("TASK_STATUS_UPDATE", "Updated task Title: " + response.title() + " status to: " + status);
         return ResponseEntity.ok(response);
     }
 
