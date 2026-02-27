@@ -6,7 +6,7 @@ import com.example.userapp.dto.mapper.UserMapper;
 import com.example.userapp.entity.User;
 import com.example.userapp.exception.ResourceNotFoundException;
 import com.example.userapp.service.UserService;
-import com.example.userapp.service.LoggingService;
+import com.example.userapp.service.impl.LoggingServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final LoggingService loggingService;
+    private final LoggingServiceImpl loggingService;
 
-    public UserController(UserService userService, LoggingService loggingService) {
+    public UserController(UserService userService, LoggingServiceImpl loggingService) {
         this.userService = userService;
         this.loggingService = loggingService;
     }

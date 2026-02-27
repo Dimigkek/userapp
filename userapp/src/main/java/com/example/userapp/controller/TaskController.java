@@ -4,7 +4,7 @@ import com.example.userapp.dto.TaskRequest;
 import com.example.userapp.dto.TaskResponse;
 import com.example.userapp.entity.TaskStatus;
 import com.example.userapp.service.TaskService;
-import com.example.userapp.service.LoggingService;
+import com.example.userapp.service.impl.LoggingServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     private final TaskService taskService;
-    private final LoggingService loggingService;
+    private final LoggingServiceImpl loggingService;
 
-    public TaskController(TaskService taskService, LoggingService loggingService) {
+    public TaskController(TaskService taskService, LoggingServiceImpl loggingService) {
         this.taskService = taskService;
         this.loggingService = loggingService;
     }

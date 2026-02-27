@@ -18,6 +18,7 @@ public class AuditLog {
 
     private LocalDateTime timestamp;
 
+    private boolean deleted = false;
 
     public AuditLog() {
     }
@@ -54,4 +55,8 @@ public class AuditLog {
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
+
+    public boolean isDeleted() { return deleted; }
+
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 }
