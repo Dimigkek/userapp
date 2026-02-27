@@ -56,7 +56,7 @@ public class UserController {
             @Valid @RequestBody UserCreateRequest request
     ) {
         UserResponse updatedUser = userService.update(id, request);
-        loggingService.logActivity("USER_UPDATE", "Updated user ID: " + id + " (New name: " + request.getName() +  " " + request.getSurname() + ")");
+        loggingService.logActivity("USER_UPDATE", "Updated user ID: (" + id + ") (User: " + request.getName() +  " " + request.getSurname() + ")");
         return ResponseEntity.ok(updatedUser);
     }
 
