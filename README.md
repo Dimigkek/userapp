@@ -28,6 +28,20 @@ The project follows a **Layered Architecture** to ensure a clean separation of c
 * **Metadata-Rich Responses:** Returns a Page object containing critical metadata for the Frontend (totalElements, totalPages, isFirst, isLast).
 * **Dynamic Sorting:** Supports dynamic sorting via URL parameters (e.g., ?sort=name,desc).
 
+## Soft Delete Strategy
+* For the Audit Log domain, a Soft Delete strategy is implemented instead of destructive physical deletion:
+
+* Data Preservation: Records remain in the MySQL database with a deleted boolean flag (stored as TINYINT(1)), preserving the audit trail for regulatory or historical compliance.
+
+* Smart Retrieval: The API automatically filters out "deleted" entries via custom Repository methods (findAllByDeletedFalse), ensuring the Frontend only displays active history while the data remains safely in storage.
+
+* Operational Integrity: This approach prevents accidental data loss and allows for easy data recovery directly through the database layer if needed.
+
+## Audit Logging & Asynchronous System Tracking
+The system features an advanced activity tracking mechanism to ensure full transparency of all critical operations:
+* Asynchronous Processing (@Async): Audit log persistence is executed on a separate thread pool. This ensures that the primary business logic (e.g., User or Task creation) is never blocked by logging I/O operations, maintaining high system throughput.
+
+* Decoupled Architecture: Utilizes a strict Interface-Implementation pattern (LoggingService -> LoggingServiceImpl) to isolate logging logic from REST controllers, following the Dependency Inversion Principle.
 ## Data Transfer Objects (DTO) & Mapping
 * **Request/Response Segregation:** Specialized DTOs for creation and retrieval ensure that internal database fields are never exposed.
 * **Circular Reference Prevention:** DTOs "flatten" complex relationships (like Addresses and Assignee lists), preventing infinite recursion loops during JSON serialization.
