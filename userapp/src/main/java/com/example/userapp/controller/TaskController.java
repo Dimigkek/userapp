@@ -4,6 +4,7 @@ import com.example.userapp.dto.TaskRequest;
 import com.example.userapp.dto.TaskResponse;
 import com.example.userapp.entity.TaskStatus;
 import com.example.userapp.service.TaskService;
+import com.example.userapp.service.LoggingService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,24 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     private final TaskService taskService;
+    private final LoggingService loggingService;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, LoggingService loggingService) {
         this.taskService = taskService;
+        this.loggingService = loggingService;
+    }
+
+
+    @GetMapping
+    public ResponseEntity<Page<TaskResponse>> getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(taskService.getAllTasks(page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.getTaskById(id));
     }
 
     @GetMapping("/owner/{ownerId}")
@@ -36,39 +52,36 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest request) {
-        return ResponseEntity.ok(taskService.createTask(request));
+        TaskResponse response = taskService.createTask(request);
+        loggingService.logActivity("TASK_CREATE", "Created task: " + request.title());
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
-        return ResponseEntity.ok(taskService.getTaskById(id));
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
+        TaskResponse response = taskService.updateTask(id, request);
+        loggingService.logActivity("TASK_UPDATE", "Updated task ID: " + id + " with title: " + request.title());
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<TaskResponse>> getAllTasks(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return ResponseEntity.ok(taskService.getAllTasks(page, size));
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskResponse> updateStatus(@PathVariable Long id, @RequestParam TaskStatus status) {
+        TaskResponse response = taskService.updateTaskStatus(id, status);
+        loggingService.logActivity("TASK_STATUS_UPDATE", "Task Title: " + response.title() + " status to: " + status);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{taskId}/assign/{userId}")
     public ResponseEntity<TaskResponse> assignUser(@PathVariable Long taskId, @PathVariable Long userId) {
-        return ResponseEntity.ok(taskService.assignUserToTask(taskId, userId));
+        TaskResponse response = taskService.assignUserToTask(taskId, userId);
+        loggingService.logActivity("TASK_ASSIGN", "Task ID " + taskId + " assigned to User ID " + userId);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
+        loggingService.logActivity("TASK_DELETE", "Deleted task ID: " + id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<TaskResponse> updateStatus(@PathVariable Long id, @RequestParam TaskStatus status) {
-        return ResponseEntity.ok(taskService.updateTaskStatus(id, status));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
-        return ResponseEntity.ok(taskService.updateTask(id, request));
     }
 }

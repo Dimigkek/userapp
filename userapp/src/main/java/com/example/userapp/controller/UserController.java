@@ -6,6 +6,7 @@ import com.example.userapp.dto.mapper.UserMapper;
 import com.example.userapp.entity.User;
 import com.example.userapp.exception.ResourceNotFoundException;
 import com.example.userapp.service.UserService;
+import com.example.userapp.service.LoggingService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,16 +19,20 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final LoggingService loggingService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LoggingService loggingService) {
         this.userService = userService;
+        this.loggingService = loggingService;
     }
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
             @Valid @RequestBody UserCreateRequest request
     ) {
-        return ResponseEntity.ok(userService.create(request));
+        UserResponse response = userService.create(request);
+        loggingService.logActivity("USER_CREATE", "Created user: " + request.getName() + " " + request.getSurname());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
@@ -40,11 +45,9 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         User user = userService.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-        return ResponseEntity.ok(
-                UserMapper.toResponse(user)
-        );
+        return ResponseEntity.ok(UserMapper.toResponse(user));
     }
 
     @PutMapping("/{id}")
@@ -53,14 +56,14 @@ public class UserController {
             @Valid @RequestBody UserCreateRequest request
     ) {
         UserResponse updatedUser = userService.update(id, request);
-
-
+        loggingService.logActivity("USER_UPDATE", "Updated user ID: " + id + " (New name: " + request.getName() +  " " + request.getSurname() + ")");
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
+        loggingService.logActivity("USER_DELETE", "Deleted user with ID: " + id);
         return ResponseEntity.noContent().build();
     }
 }
