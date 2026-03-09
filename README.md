@@ -54,6 +54,11 @@ The database is designed with **Normalization** and **Data Integrity** in mind:
     * **1:N:** Owner to Tasks.
     * **M:N:** Users to Assigned Tasks (via join table).
 * **Data Integrity:** Configured with CascadeType.ALL and orphanRemoval=true for automated lifecycle management of related entities.
+* 
+## Design Patterns & Architecture
+* **Singleton Pattern:** By default, Spring manages `@Service` and `@RestController` as Singleton beans. This ensures efficient memory usage by maintaining a single instance for the entire application lifecycle.
+* **Dependency Injection:** Utilizing Constructor Injection to manage dependencies, ensuring the application remains decoupled and easily testable.
+* **Proxy Pattern:** Spring uses AOP proxies to handle cross-cutting concerns like `@Async` and `@Transactional` logging.
 
 ## Key Features
 * **Server-side Pagination:** Efficient data retrieval for both Users and Tasks.
